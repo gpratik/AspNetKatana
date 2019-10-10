@@ -16,6 +16,9 @@ namespace Microsoft.Owin.Host.HttpListener
 
     internal class DisconnectHandler
     {
+        // Win8 minimum
+        private static bool SkipIOCPCallbackOnSuccess = Environment.OSVersion.Version >= new Version(6, 2);
+
         private readonly ConcurrentDictionary<ulong, ConnectionCancellation> _connectionCancellationTokens;
         private readonly System.Net.HttpListener _listener;
         private readonly CriticalHandle _requestQueueHandle;
@@ -112,7 +115,15 @@ namespace Microsoft.Owin.Host.HttpListener
                 _connectionCancellationTokens.TryRemove(connectionId, out cancellation);
                 LogHelper.LogException(_logger, "HttpWaitForDisconnectEx", new Win32Exception((int)hr));
                 cts.Cancel();
-                cts.Dispose();
+            }
+
+            if (hr == NativeMethods.HttpErrors.NO_ERROR && SkipIOCPCallbackOnSuccess)
+            {
+                // IO operation completed synchronously - callback won't be called to signal completion
+                Overlapped.Free(nativeOverlapped);
+                ConnectionCancellation cancellation;
+                _connectionCancellationTokens.TryRemove(connectionId, out cancellation);
+                cts.Cancel();
             }
 
             return returnToken;
@@ -129,7 +140,6 @@ namespace Microsoft.Owin.Host.HttpListener
             {
                 LogHelper.LogException(_logger, "App errors on disconnect notification.", age);
             }
-            cts.Dispose();
         }
 
         private class ConnectionCancellation

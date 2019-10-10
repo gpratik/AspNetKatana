@@ -1,14 +1,14 @@
 
 var PROJECT='Katana'
 var AUTHORS='Microsoft'
-var SHIP='${Version(4, 0, 0, "alpha1")}'
+var SHIP='${Version(4, 1, 0, "preview1")}'
 var DEV='${Version(0, 31, 0, "pre")}'
 set FINAL_MILESTONE='${false}'
-var AZUREAD_VERSION='5.2.0'
-var AZUREAD_SUFFIX='.407281058-pre'
+var AZUREAD_VERSION='5.3.0'
+var AZUREAD_SUFFIX=''
 var VERSION='${SHIP.VERSION}'
 var FULL_VERSION='${SHIP.FULL_VERSION}'
-var EULA='https://www.microsoft.com/web/webpi/eula/net_library_eula_enu.htm'
+var EULA='https://raw.githubusercontent.com/aspnet/AspNetKatana/v4.0.1/LICENSE.txt'
 var PROJECT_URL='https://github.com/aspnet/AspNetKatana/'
 var TAGS='Microsoft OWIN Katana'
 
@@ -24,7 +24,8 @@ var PACKAGE_DIR='${Path.Combine(TARGET_DIR, "package")}'
 
 var NUGET_GALLERY_SOURCE='https://api.nuget.org/v3/index.json'
 var NUGET_ASPNET_SOURCE='https://dotnet.myget.org/F/katana-dev/api/v3/index.json'
-var NUGET_AZUREAD_SOURCE='https://www.myget.org/F/azureadwebstacknightly/'
+-// var NUGET_AZUREAD_SOURCE='https://www.myget.org/F/azureadwebstacknightly/'
+var NUGET_AZUREAD_SOURCE=''
 
 var NUGET_DEPLOY='https://dotnet.myget.org/F/katana-dev/'
 
@@ -83,7 +84,7 @@ test if='IsMono'
 use-standard-lifecycle
 
 -// include sets of standard work targets. features include 'nuget,xunit,nunit'
-use-standard-goals features='nuget,xunit,stylecop'
+use-standard-goals features='nuget,xunit'
 
 -// additional work targets are defined below
 
@@ -206,7 +207,7 @@ var signing='${new List<string>()}'
           File.Copy(initialFile, inputFile, true);
           copySigned = and(copySigned, ()=>File.Copy(outputFile, finalFile, true));
         }
-    build projectFile='BuildServer.targets' configuration='Release' extra='/t:DoSignBinaries "/p:Sign=Sign;BranchName=Dev"'
+    build projectFile='BuildServer.targets' configuration='Release' extra='/t:SignArtifacts "/p:Sign=Sign;BranchName=Dev"'
 
   directory delete='${PACKAGE_DIR}'
   copy sourceDir='${BUILD_DIR}' outputDir='${PACKAGE_DIR}'
@@ -386,7 +387,7 @@ functions
 		  {
 			return "";
 		  }
-		  // -MILESTONE-ymmdd-BUILD_NUMBER-BUILD_SUFFIX
+		  // -MILESTONE-BUILD_NUMBER-BUILD_SUFFIX
           var pre = "";
           if (!String.IsNullOrEmpty(MILESTONE))
           {
@@ -396,7 +397,7 @@ functions
           {
             var buildNumber = "000" + Environment.GetEnvironmentVariable("BUILD_NUMBER");
             buildNumber = buildNumber.Substring(buildNumber.Length - 3);
-            pre += "-" + BuildDate() + "-" + buildNumber;
+            pre += "-" + buildNumber;
 
 		    if (!String.IsNullOrEmpty(BranchSuffix()))
 		    {

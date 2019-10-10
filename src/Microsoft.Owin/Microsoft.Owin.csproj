@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Microsoft.Owin</RootNamespace>
     <AssemblyName>Microsoft.Owin</AssemblyName>
-    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
     <TargetFrameworkProfile />
@@ -61,6 +61,7 @@
     <Compile Include="Infrastructure\CookieManager.cs" />
     <Compile Include="Infrastructure\ChunkingCookieManager.cs" />
     <Compile Include="Infrastructure\ICookieManager.cs" />
+    <Compile Include="Infrastructure\PathStringHelper.cs" />
     <Compile Include="IOwinContext.cs" />
     <Compile Include="IOwinRequest.cs" />
     <Compile Include="IOwinResponse.cs" />
@@ -94,6 +95,7 @@
     <Compile Include="Infrastructure\SystemClock.cs" />
     <Compile Include="Infrastructure\WebUtils.cs" />
     <Compile Include="ResponseCookieCollection.cs" />
+    <Compile Include="SameSiteMode.cs" />
     <Compile Include="Security\AuthenticateResult.cs" />
     <Compile Include="Security\AuthenticationDescription.cs" />
     <Compile Include="Extensions\IntegratedPipelineExtensions.cs" />
